@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.ManyToOne;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -12,6 +13,8 @@ import java.util.NoSuchElementException;
 @Getter
 public class Database {
     private String name;
+
+    @ManyToOne
     private HashMap<String, Table> tables;
 
     public Database(String name, HashMap<String, Table> tables) {

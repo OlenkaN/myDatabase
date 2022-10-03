@@ -17,9 +17,9 @@ import java.util.HashMap;
 public class MyDatabaseApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MyDatabaseApplication.class, args);
+/*        SpringApplication.run(MyDatabaseApplication.class, args);
         TimeLnvlAttr timeLnvlAttr= new TimeLnvlAttr("Time", "");
-        timeLnvlAttr.getValue("07/06/2013 10:11:59 / 07/06/2014 10:11:59");
+        timeLnvlAttr.getValue("2021-01-22T21:09:16Z/2021-01-22T21:10:16Z");
         HashMap<String, Attribute> row1 = new HashMap<>();
         row1.put("User", Attribute.getAttribute("User", Types.STRING, "Kate"));
         row1.put("Age", Attribute.getAttribute("Age", Types.INTEGER, "15"));
@@ -31,7 +31,7 @@ public class MyDatabaseApplication {
         tableHashMap.put(table.getName(),table);
         Database database= new Database("Ternopil",tableHashMap);
         DatabaseManager databaseManager= new DatabaseManager();
-        databaseManager.add(database);
+        databaseManager.add(database);*/
     }
 
 }

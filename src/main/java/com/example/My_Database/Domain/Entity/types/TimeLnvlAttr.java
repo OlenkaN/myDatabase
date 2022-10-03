@@ -1,10 +1,11 @@
 package com.example.My_Database.Domain.Entity.types;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 
 public class TimeLnvlAttr extends Attribute {
     public TimeLnvlAttr(String name, String value) {
-        super();
+
     }
 
     @Override
@@ -24,6 +25,6 @@ public class TimeLnvlAttr extends Attribute {
 
     @Override
     public Value getDefault() {
-        return null;
+        return new Value<>(new Interval(DateTime.now(), DateTime.now().plusDays(1)));
     }
 }
