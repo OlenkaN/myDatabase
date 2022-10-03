@@ -17,6 +17,9 @@ import java.util.HashMap;
 public class MyDatabaseApplication {
 
     public static void main(String[] args) {
+
+
+
 /*        SpringApplication.run(MyDatabaseApplication.class, args);
         TimeLnvlAttr timeLnvlAttr= new TimeLnvlAttr("Time", "");
         timeLnvlAttr.getValue("2021-01-22T21:09:16Z/2021-01-22T21:10:16Z");
