@@ -30,6 +30,18 @@ public class Row {
     }*/
 
 
+    public boolean EqualTo(Row anotherRow){
+        for (String key: attributeHashMap.keySet()) {
+            if(!anotherRow.attributeHashMap.containsKey(key)){
+                return false;
+            }
+            if(!anotherRow.attributeHashMap.get(key).value.toString().equals(attributeHashMap.get(key).value.toString())){
+                return false;
+            }
+        }
+        return anotherRow.attributeHashMap.size() == attributeHashMap.size();
+    }
+
     public Boolean addAttr(Attribute attr) {
         if (attributeHashMap.containsKey(attr.name)) {
             throw new EntityExistsException(String.format("Column with this name: %s already exist", attr.getName()));
