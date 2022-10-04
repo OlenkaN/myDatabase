@@ -7,6 +7,7 @@ import com.example.My_Database.Domain.Entity.Table;
 import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.TimeLnvlAttr;
 import com.example.My_Database.Domain.Entity.types.Types;
+import com.google.gson.Gson;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -49,6 +50,10 @@ public class MyDatabaseApplication {
         Database database = new Database("Ternopil", tableHashMap);
         DatabaseManager databaseManager = new DatabaseManager();
         databaseManager.add(database);
+        Database.SaveToFile("test1", database);
+        Database db = new Database();
+        db = Database.ReadFromFile("test1");
+
     }
 
 }

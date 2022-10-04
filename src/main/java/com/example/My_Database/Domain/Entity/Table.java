@@ -3,6 +3,7 @@ package com.example.My_Database.Domain.Entity;
 import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.Value;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +12,7 @@ import java.util.*;
 @Slf4j
 @Setter
 @Getter
+@NoArgsConstructor
 public class Table {
     private String name;
     private List<Row> rows;

@@ -1,5 +1,8 @@
 package com.example.My_Database.Domain.Entity.types;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class StringAttr extends Attribute {
     public StringAttr(String name, String value) {
         this.name = name;
