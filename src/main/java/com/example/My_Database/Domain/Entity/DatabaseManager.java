@@ -1,11 +1,10 @@
 package com.example.My_Database.Domain.Entity;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -46,15 +45,34 @@ public class DatabaseManager {
         return true;
     }
 
-    public boolean SaveToFile(String filename, String content) {
+    public boolean SaveToFile(String filename, DatabaseManager databaseManager) {
         try {
+            Gson gson = new Gson();
+            String json = gson.toJson(databaseManager);
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(content);
+            writer.write(json);
             writer.close();
         } catch (IOException ex) {
             log.error(ex.getMessage());
             return false;
         }
         return true;
+    }
+
+    public Boolean ReadFromFile(String filename, DatabaseManager saveTo) {
+        try {
+            Gson gson = new Gson();
+
+            // create a reader
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+
+            saveTo = gson.fromJson(reader, DatabaseManager.class);
+
+            reader.close();
+            return true;
+        } catch (IOException ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
     }
 }

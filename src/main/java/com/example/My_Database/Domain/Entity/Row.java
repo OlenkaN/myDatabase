@@ -3,6 +3,7 @@ package com.example.My_Database.Domain.Entity;
 import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.Value;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.EntityExistsException;
@@ -11,17 +12,15 @@ import java.util.HashMap;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Row {
     //map of column title and value
-    private HashMap<String, Attribute> attributeHashMap;
+    private HashMap<String, Attribute> attributeHashMap = new HashMap<>();
 
     public Row(HashMap<String, Attribute> values) {
         this.attributeHashMap = values;
     }
 
-    public Row() {
-        this.attributeHashMap = new HashMap<>();
-    }
 
 /*    public Row(HashMap<String,Value> valueHashMap, Boolean isValue) {
         this.attributeHashMap = new HashMap<>();
@@ -29,6 +28,18 @@ public class Row {
               Attribute.getAttribute(value.getValue().getVal(), value.getType())));
     }*/
 
+
+    public boolean EqualTo(Row anotherRow){
+        for (String key: attributeHashMap.keySet()) {
+            if(!anotherRow.attributeHashMap.containsKey(key)){
+                return false;
+            }
+            if(!anotherRow.attributeHashMap.get(key).value.toString().equals(attributeHashMap.get(key).value.toString())){
+                return false;
+            }
+        }
+        return anotherRow.attributeHashMap.size() == attributeHashMap.size();
+    }
 
     public Boolean addAttr(Attribute attr) {
         if (attributeHashMap.containsKey(attr.name)) {

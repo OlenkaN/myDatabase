@@ -1,12 +1,14 @@
 package com.example.My_Database.Domain.Entity.types;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.reflect.Type;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class Value<T> {
     private T val;
     private Types type;

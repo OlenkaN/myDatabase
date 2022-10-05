@@ -1,7 +1,9 @@
 package com.example.My_Database.Domain.Entity.types;
 
-import java.time.LocalTime;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+@NoArgsConstructor
 public class TimeAttr extends Attribute {
     public TimeAttr(String name, String value) {
         this.name = name;

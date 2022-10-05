@@ -1,7 +1,11 @@
 package com.example.My_Database.Domain.Entity.types;
 
 
-public abstract class Attribute {
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+@NoArgsConstructor
+public  class Attribute  {
     public String name;
 
     public Value value;
@@ -10,13 +14,21 @@ public abstract class Attribute {
         return this.name;
     }
 
-    public abstract Types getType();
+    public Types getType() {
+        return null;
+    }
 
-    public abstract Boolean validate(String val);
+    public Boolean validate(String val) {
+        return null;
+    }
 
-    public abstract Value getValue(String val);
+    public Value getValue(String val) {
+        return null;
+    }
 
-    public abstract Value getDefault();
+    public Value getDefault() {
+        return null;
+    }
 
     public static Attribute getAttribute(String name, Types type, String value) {
         switch (type) {

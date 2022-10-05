@@ -1,5 +1,8 @@
 package com.example.My_Database.Domain.Entity.types;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class RealAttr extends Attribute {
     public RealAttr(String name, String value) {
         this.name = name;
