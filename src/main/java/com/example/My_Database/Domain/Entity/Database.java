@@ -27,6 +27,11 @@ public class Database {
         this.tables = tables;
     }
 
+    public Database(String name) {
+        this.name = name;
+        this.tables=new HashMap<>();
+    }
+
     public Collection<Table> list() {
         return tables.values();
     }

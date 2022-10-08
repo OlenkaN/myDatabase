@@ -20,6 +20,7 @@ public class Table {
     public Table(String tableName) {
         this.name = tableName;
         this.rows = new ArrayList<>();
+        rows.add(new Row());
     }
 
     public Table(String tableName, List<Row> rows) {
@@ -74,15 +75,25 @@ public class Table {
         return true;
     }
 
-    private void addAttrToRows(Attribute attribute) {
-        for (Row row : rows) {
-            row.getAttributeHashMap().put(attribute.name, attribute);
+    public Boolean addAttrToRows(Attribute attribute) {
+        try {
+            for (Row row : rows) {
+                row.getAttributeHashMap().put(attribute.name, attribute);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
-    private void removeAttrFromRows(String key) {
-        for (Row row : rows) {
-            row.getAttributeHashMap().remove(key);
+    public Boolean removeAttrFromRows(String key) {
+        try {
+            for (Row row : rows) {
+                row.getAttributeHashMap().remove(key);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
