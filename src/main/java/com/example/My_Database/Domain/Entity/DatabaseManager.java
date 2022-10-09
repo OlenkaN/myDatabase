@@ -1,5 +1,6 @@
 package com.example.My_Database.Domain.Entity;
 
+import com.example.My_Database.utils.Result;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,12 +30,12 @@ public class DatabaseManager {
         return databases.getOrDefault(name, null);
     }
 
-    public boolean add(Database db) {
+    public Result add(Database db) {
         if (databases.containsKey(db.getName())) {
-            throw new KeyAlreadyExistsException("Duplicate error: database with such name already exists");
+            return Result.Fail("Duplicate error: database with such name already exists");
         }
         databases.put(db.getName(), db);
-        return true;
+        return Result.Success();
     }
 
     public boolean delete(String name) {
@@ -45,34 +46,5 @@ public class DatabaseManager {
         return true;
     }
 
-    public boolean SaveToFile(String filename, DatabaseManager databaseManager) {
-        try {
-            Gson gson = new Gson();
-            String json = gson.toJson(databaseManager);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(json);
-            writer.close();
-        } catch (IOException ex) {
-            log.error(ex.getMessage());
-            return false;
-        }
-        return true;
-    }
 
-    public Boolean ReadFromFile(String filename, DatabaseManager saveTo) {
-        try {
-            Gson gson = new Gson();
-
-            // create a reader
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
-
-            saveTo = gson.fromJson(reader, DatabaseManager.class);
-
-            reader.close();
-            return true;
-        } catch (IOException ex) {
-            log.error(ex.getMessage());
-            return false;
-        }
-    }
 }

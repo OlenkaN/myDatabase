@@ -1,5 +1,8 @@
 package com.example.My_Database.Domain.Entity;
 
+import com.example.My_Database.utils.Result;
+import com.example.My_Database.utils.toGson.Deserializer;
+import com.example.My_Database.utils.toGson.Serializer;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.ManyToOne;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,26 +42,26 @@ public class Database {
         return tables.getOrDefault(tableName, null);
     }
 
-    public boolean addTable(Table table) {
+    public Result addTable(Table table) {
         if (tables.containsKey(table.getName())) {
-            throw new EntityExistsException(String.format("Table with this name: {} already exist", table.getName()));
+           return Result.Fail(String.format("Table with this name: {} already exist", table.getName()));
         }
         tables.put(table.getName(), table);
-        return true;
+        return Result.Success();
     }
 
-    public boolean deleteTable(String tableName) {
+    public Result deleteTable(String tableName) {
         if (!tables.containsKey(tableName)) {
-            throw new NoSuchElementException(String.format("Table with this name: {} not exist", tableName));
+           return Result.Fail(String.format("Table with this name: {} not exist", tableName));
         }
         tables.remove(tableName);
-        return true;
+        return Result.Success();
     }
 
     public static boolean SaveToFile(String filename, Database database) {
         try {
-            Gson gson = new Gson();
-            String json = gson.toJson(database);
+
+            String json = Serializer.Serialize(database);
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             writer.write(json);
             writer.close();
@@ -77,7 +79,7 @@ public class Database {
             // create a reader
             BufferedReader reader = new BufferedReader(new FileReader(filename));
 
-            Database saveTo = gson.fromJson(reader, Database.class);
+            Database saveTo = Deserializer.getGson().fromJson(reader, Database.class);
 
             reader.close();
             return saveTo;

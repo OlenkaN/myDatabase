@@ -37,14 +37,14 @@ public class TableHandler {
         Boolean result = true;
         for (int rowInd : table.changedRows) {
             int colInd = 0;
-            for (Attribute attr : t.getRows().get(0).getAttributeHashMap().values()) {
+            for (Attribute attr : t.listColumns()) {
                 Types type = attr.getType();
                 String newVal = table.getValueAt(rowInd, colInd);
                 Attribute newAttr = Attribute.getAttribute(attr.getName(), type, newVal);
                 if (newAttr.validate(newVal)) {
-                    Attribute val = t.getRows().get(rowInd).getAttributeHashMap().get(attr.getName());
-                    val.setValue(newAttr.value);
-                    t.getRows().get(rowInd).getAttributeHashMap().put(attr.getName(), val);
+                    Value val = t.getRows().get(rowInd).getValueHashMap().get(attr.getName());
+                    val.setVal(newVal);
+                    t.getRows().get(rowInd).getValueHashMap().put(attr.getName(), val);
                 } else {
                     result = false;
                 }
@@ -55,13 +55,12 @@ public class TableHandler {
     }
 
     private String[][] getData(Table t) {
-        Integer attrSize = t.getRows().get(0).getAttributeHashMap().size();
-        String[][] data = new String[t.getRows().size()][attrSize];
+        String[][] data = new String[t.getRows().size()][t.listColumns().size()];
         for (int i = 0; i < t.getRows().size(); i++) {
-            String[] row = new String[attrSize];
+            String[] row = new String[t.listColumns().size()];
             int j = 0;
-            HashMap<String, Attribute> values = t.getRows().get(i).getAttributeHashMap();
-            for (Attribute attr : t.getRows().get(0).getAttributeHashMap().values()) {
+            HashMap<String, Value> values = t.getRows().get(i).getValueHashMap();
+            for(Attribute attr: t.listColumns()){
                 row[j++] = values.get(attr.name).toString();
             }
             data[i] = row;
@@ -70,12 +69,12 @@ public class TableHandler {
     }
 
     private void updateColumns(Table t) {
-        Integer attrSize = t.getRows().size() == 0 ? 0 : t.getRows().get(0).getAttributeHashMap().size();
+        Integer attrSize = t.listColumns().size();
         String[] colNames = new String[attrSize];
         columns = new String[attrSize];
         emptyRow = new String[attrSize];
         int i = 0;
-        for (Attribute attr : t.getRows().get(0).getAttributeHashMap().values()) {
+        for (Attribute attr : t.listColumns()) {
             columns[i] = attr.getName();
             colNames[i] = attr.getName() + "(" + attr.getType().name() + ")";
             emptyRow[i++] = attr.getDefault().toString();

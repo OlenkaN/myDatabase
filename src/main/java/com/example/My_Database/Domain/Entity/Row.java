@@ -15,53 +15,27 @@ import java.util.HashMap;
 @NoArgsConstructor
 public class Row {
     //map of column title and value
-    private HashMap<String, Attribute> attributeHashMap = new HashMap<>();
+    private HashMap<String, Value> valueHashMap = new HashMap<>();
 
-    public Row(HashMap<String, Attribute> values) {
-        this.attributeHashMap = values;
+    public Row(HashMap<String, Value> values) {
+        this.valueHashMap = values;
     }
 
 
-/*    public Row(HashMap<String,Value> valueHashMap, Boolean isValue) {
-        this.attributeHashMap = new HashMap<>();
-       valueHashMap.entrySet().forEach(value -> this.attributeHashMap.put(value.getKey(),
-              Attribute.getAttribute(value.getValue().getVal(), value.getType())));
-    }*/
 
 
     public boolean EqualTo(Row anotherRow){
-        for (String key: attributeHashMap.keySet()) {
-            if(!anotherRow.attributeHashMap.containsKey(key)){
+        for (String key: valueHashMap.keySet()) {
+            if(!anotherRow.valueHashMap.containsKey(key)){
                 return false;
             }
-            if(!anotherRow.attributeHashMap.get(key).value.toString().equals(attributeHashMap.get(key).value.toString())){
+            if(!anotherRow.valueHashMap.get(key).toString().equals(valueHashMap.get(key).toString())){
                 return false;
             }
         }
-        return anotherRow.attributeHashMap.size() == attributeHashMap.size();
+        return anotherRow.valueHashMap.size() == valueHashMap.size();
     }
 
-    public Boolean addAttr(Attribute attr) {
-        if (attributeHashMap.containsKey(attr.name)) {
-            throw new EntityExistsException(String.format("Column with this name: %s already exist", attr.getName()));
-
-        }
-        attributeHashMap.put(attr.name, attr);
-        return true;
-    }
-
-
-    public Boolean deleteColumn(String key) {
-        if (!attributeHashMap.containsKey(key)) {
-            throw new EntityNotFoundException(String.format("Column with this name: %s not exist", key));
-        }
-        attributeHashMap.remove(key);
-        return true;
-    }
-
-    public Attribute getAttr(String key) {
-        return attributeHashMap.getOrDefault(key, null);
-    }
 
 
 }

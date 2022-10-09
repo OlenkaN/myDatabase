@@ -3,17 +3,19 @@ package com.example.My_Database.GUIForms;
 
 import com.example.My_Database.Domain.Entity.Database;
 import com.example.My_Database.Domain.Entity.DatabaseManager;
+import com.example.My_Database.Domain.Entity.Row;
 import com.example.My_Database.Domain.Entity.Table;
 import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.Types;
+import com.example.My_Database.Domain.Entity.types.Value;
 import com.example.My_Database.Services.TableHandler;
+import com.example.My_Database.utils.Result;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 public class MainViewWindow {
     public JFrame frame;
@@ -52,19 +54,25 @@ public class MainViewWindow {
     private JButton deleteRowButton;
     private JButton addAttributeButtonInEditTable;
     private JButton saveEditedTableButton;
-    private JButton deleteDuplicateRowsButton;
-    private JList tablesToShow;
+    private JButton projectionButton;
+    private JList<String> tablesToShow;
+    private JButton showTable;
+    private JPanel showTablePanel;
+    private JTable tableToShowView;
+    private JButton backToMainFromShowTableButton;
+    private JButton backShowDBFromShowTable;
+    private JButton BackToOriginal;
     private DatabaseManager dbManager;
     private Database activeDB;
     private Table activeTable;
     private TableHandler tableHandler;
-    private String[] typesList = new String[]{
+    private final String[] typesList = new String[]{
           "INTEGER",
           "REAL",
           "STRING",
           "CHAR",
-          "COMPLEX_INTEGER",
-          "COMPLEX_REAL",
+          "TIME",
+          "TIME_LNVL",
     };
 
     public MainViewWindow() {
@@ -78,8 +86,8 @@ public class MainViewWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new CardLayout(0, 0));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenSize.height *= 0.8;
-        screenSize.width *= 0.8;
+        screenSize.height *= 0.5;
+        screenSize.width *= 0.5;
         frame.setSize(screenSize);
         addPanelsToTheFrame();
         changePanels();
@@ -92,26 +100,30 @@ public class MainViewWindow {
         frame.getContentPane().add(showDBPanel, "name_4");
         frame.getContentPane().add(createTablePanel, "name_5");
         frame.getContentPane().add(editTablePanel, "name_6");
+        frame.getContentPane().add(showTablePanel, "name_7");
 //        frame.getContentPane().add(moviesEditPanel, "name_7");
 //        frame.getContentPane().add(genresEditPanel, "name_8");
     }
 
     private void buttonsProcessing() {
-        //TODO add validation to the name
         createDatabaseButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String name = JOptionPane.showInputDialog("Input name for new database");
-                Database newDb = new Database(name);
-                boolean result = dbManager.add(newDb);
-                if (result) {
-                    JOptionPane.showMessageDialog(frame, "Database `" + name + "` is created");
-                    changeActivePanel(createDBPanel, mainPanel);
-                    activeDB = newDb;
-                    updateTablesList();
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Name can not be empty");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Cannot add new db");
+                    Database newDb = new Database(name);
+                    Result result = dbManager.add(newDb);
+                    if (result.isSuccessful()) {
+                        JOptionPane.showMessageDialog(frame, "Database `" + name + "` is created");
+                        changeActivePanel(createDBPanel, mainPanel);
+                        activeDB = newDb;
+                        updateTablesList();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
+                    }
                 }
             }
         });
@@ -177,24 +189,48 @@ public class MainViewWindow {
             }
         });
 
+        showTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                String selectedTable = tablesToShow.getSelectedValue();
+                if (selectedTable == null) {
+                    JOptionPane.showMessageDialog(frame, "Firstly select table to show");
+                } else {
+                    activeTable = activeDB.get(selectedTable);
+                    if (activeTable != null) {
+                        changeActivePanel(showTablePanel, showDBPanel);
+                        tableHandler = new TableHandler(activeTable);
+                        setTablesToShowModel();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Failed to show selected table");
+                    }
+                }
+            }
+        });
+
         addAttributeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String name = JOptionPane.showInputDialog("Input name for the attribute");
-                String type = (String) JOptionPane.showInputDialog(null, "",
-                      "Select a type", JOptionPane.QUESTION_MESSAGE, null, // Use
-                      // default
-                      // icon
-                      typesList, // Array of choices
-                      typesList[1]);
-                Attribute attr = Attribute.getAttribute(name, Types.valueOf(type));
-                Boolean result = activeTable.addAttrToRows(attr);
-                if (result) {
-                    JOptionPane.showMessageDialog(frame, "Attribute `" + name + "` added");
-                    updateListAttributes();
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Name can not be empty");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Cannot add attribute");
+                    String type = (String) JOptionPane.showInputDialog(null, "",
+                          "Select a type", JOptionPane.QUESTION_MESSAGE, null, // Use
+                          // default
+                          // icon
+                          typesList, // Array of choices
+                          typesList[1]);
+                    Attribute attr = Attribute.getAttribute(name, Types.valueOf(type));
+                    Result result = activeTable.addAttr(attr);
+                    if (result.isSuccessful()) {
+                        JOptionPane.showMessageDialog(frame, "Attribute `" + name + "` added");
+                        updateListAttributes();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
+                    }
                 }
             }
         });
@@ -204,15 +240,19 @@ public class MainViewWindow {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String name = JOptionPane.showInputDialog("Input name for new table");
-                Table newTable = new Table(name);
-                boolean result = activeDB.addTable(newTable);
-                if (result) {
-                    JOptionPane.showMessageDialog(frame, "Table `" + name + "` created");
-                    changeActivePanel(createTablePanel, createDBPanel);
-                    activeTable = newTable;
-                    updateTablesList();
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Name can not be empty");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Cannot create new table");
+                    Table newTable = new Table(name);
+                    Result result = activeDB.addTable(newTable);
+                    if (result.isSuccessful()) {
+                        JOptionPane.showMessageDialog(frame, "Table `" + name + "` created");
+                        changeActivePanel(createTablePanel, createDBPanel);
+                        activeTable = newTable;
+                        updateTablesList();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
+                    }
                 }
             }
         });
@@ -228,18 +268,23 @@ public class MainViewWindow {
             }
         });
 
+
         addTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String name = JOptionPane.showInputDialog("Input name for new table");
-                Table newTable = new Table(name);
-                boolean result = activeDB.addTable(newTable);
-                if (result) {
-                    JOptionPane.showMessageDialog(frame, "Table `" + name + "` created");
-                    updateTablesListInEditDB();
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Name can not be empty");
                 } else {
-                    JOptionPane.showMessageDialog(frame, " Cannot add new table");
+                    Table newTable = new Table(name);
+                    Result result = activeDB.addTable(newTable);
+                    if (result.isSuccessful()) {
+                        JOptionPane.showMessageDialog(frame, "Table `" + name + "` created");
+                        updateTablesListInEditDB();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
+                    }
                 }
             }
         });
@@ -252,11 +297,11 @@ public class MainViewWindow {
                 if (selectedTable == null) {
                     JOptionPane.showMessageDialog(frame, "Firstly select table to delete");
                 } else {
-                    boolean result = activeDB.deleteTable(selectedTable);
-                    if (result) {
+                    Result result = activeDB.deleteTable(selectedTable);
+                    if (result.isSuccessful()) {
                         updateTablesListInEditDB();
                     } else {
-                        JOptionPane.showMessageDialog(frame, "Cannot delete this table");
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
                     }
                 }
             }
@@ -287,9 +332,19 @@ public class MainViewWindow {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 tableHandler.insertRow();
-                boolean res = true;
-                //Boolean res = activeTable.addEmptyRow();
-                if (!res) {
+                HashMap<String, Value> values = new HashMap<>();
+
+                for (Attribute attr : activeTable.getColumns().listAttributes()) {
+                    String value = JOptionPane.showInputDialog("Input correct value for column :" + attr.name + ": " + attr.getType());
+                    boolean result = attr.validate(value);
+                    if (!result) {
+                        JOptionPane.showMessageDialog(frame, "Not valid value, will set default value ");
+                        value = attr.getDefault().toString();
+                    }
+                    values.put(attr.getName(), attr.getValue(value));
+                }
+                Result res = activeTable.addRow(new Row(values));
+                if (!res.isSuccessful()) {
                     JOptionPane.showMessageDialog(frame, "Failed to add row to this table");
                 }
                 tableHandler = new TableHandler(activeTable);
@@ -307,8 +362,8 @@ public class MainViewWindow {
                     JOptionPane.showMessageDialog(frame, "Firstly select any row to delete");
                     return;
                 }
-                boolean res = activeTable.deleteRow(selectedRow);
-                if (!res) {
+                Result res = activeTable.deleteRow(selectedRow);
+                if (!res.isSuccessful()) {
                     JOptionPane.showMessageDialog(frame, "Row isn't deleted");
                 } else {
                     tableHandler = new TableHandler(activeTable);
@@ -323,9 +378,9 @@ public class MainViewWindow {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                String[] attributes = new String[activeTable.getRows().get(0).getAttributeHashMap().size()];
+                String[] attributes = new String[activeTable.listColumns().size()];
                 int i = 0;
-                for (Attribute attr : activeTable.getRows().get(0).getAttributeHashMap().values()) {
+                for (Attribute attr : activeTable.listColumns()) {
                     attributes[i++] = attr.getName();
                 }
                 String attr = (String) JOptionPane.showInputDialog(null, "",
@@ -334,8 +389,8 @@ public class MainViewWindow {
                       // icon
                       attributes, // Array of choices
                       typesList[1]);
-                Boolean res = activeTable.removeAttrFromRows(attr);
-                if (!res) {
+                Result res = activeTable.deleteAttr(attr);
+                if (!res.isSuccessful()) {
                     JOptionPane.showMessageDialog(frame, "Cannot delete this attr");
                 } else {
                     tableHandler = new TableHandler(activeTable);
@@ -350,19 +405,23 @@ public class MainViewWindow {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String name = JOptionPane.showInputDialog("Input name for the attribute");
-                String type = (String) JOptionPane.showInputDialog(null, "",
-                      "Select a type", JOptionPane.QUESTION_MESSAGE, null, // Use
-                      // default
-                      // icon
-                      typesList, // Array of choices
-                      typesList[1]);
-                Attribute attr = Attribute.getAttribute(name, Types.valueOf(type));
-                Boolean result = activeTable.addAttrToRows(attr);
-                if (result) {
-                    tableHandler = new TableHandler(activeTable);
-                    setTableModel();
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Name can not be empty");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Fail to add attr");
+                    String type = (String) JOptionPane.showInputDialog(null, "",
+                          "Select a type", JOptionPane.QUESTION_MESSAGE, null, // Use
+                          // default
+                          // icon
+                          typesList, // Array of choices
+                          typesList[1]);
+                    Attribute attr = Attribute.getAttribute(name, Types.valueOf(type));
+                    Result result = activeTable.addAttr(attr);
+                    if (result.isSuccessful()) {
+                        tableHandler = new TableHandler(activeTable);
+                        setTableModel();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, result.getMsg());
+                    }
                 }
             }
         });
@@ -398,7 +457,7 @@ public class MainViewWindow {
             }
         });
 
-        deleteDuplicateRowsButton.addMouseListener(new MouseAdapter() {
+        projectionButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -406,8 +465,9 @@ public class MainViewWindow {
                     JOptionPane.showMessageDialog(frame, "Save changes before deleting duplicate rows");
                     return;
                 }
-                //activeTable.projection();
-                tableHandler = new TableHandler(activeTable);
+                JList<String> jlist = new JList<>(activeTable.getColumns().listColumnNames());
+                JOptionPane.showMessageDialog(null, jlist, "Choose..", JOptionPane.PLAIN_MESSAGE);
+                tableHandler = new TableHandler(activeTable.projection((ArrayList<String>) jlist.getSelectedValuesList()));
                 setTableModel();
             }
         });
@@ -418,12 +478,15 @@ public class MainViewWindow {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 String filename = JOptionPane.showInputDialog("Name of the file to load database from");
+                if (filename.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Filename can not be empty");
+                } else {
+                    Result res = dbManager.add(Objects.requireNonNull(Database.ReadFromFile(filename)));
 
-                boolean res = dbManager.add(Database.ReadFromFile(filename));
-
-                // InteractionResult res = dbManager.SaveToFile(filename, Serializer.Serialize(dbManager.get(dbToSave)));
-                if (!res) {
-                    JOptionPane.showMessageDialog(frame, "Can not load db");
+                    // InteractionResult res = dbManager.SaveToFile(filename, Serializer.Serialize(dbManager.get(dbToSave)));
+                    if (!res.isSuccessful()) {
+                        JOptionPane.showMessageDialog(frame, res.isSuccessful());
+                    }
                 }
             }
         });
@@ -464,6 +527,16 @@ public class MainViewWindow {
         //  tableHandler.setUpDaysColumn(tableView.getColumnModel().getColumn(0));
     }
 
+    private void setTablesToShowModel() {
+        tableToShowView.setModel(tableHandler.table);
+        tableHandler.initColumnSizes(tableToShowView);
+        tableToShowView.setFillsViewportHeight(true);
+        mainPanel.setOpaque(true);
+        tableToShowView.setVisible(true);
+        tableToShowView.setBorder(BorderFactory.createEmptyBorder());
+        //  tableHandler.setUpDaysColumn(tableView.getColumnModel().getColumn(0));
+    }
+
 
     private void updateListAttributes() {
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -471,7 +544,7 @@ public class MainViewWindow {
         if (activeTable == null) {
             return;
         }
-        Collection<Attribute> attributesArrayList = activeTable.getRows().get(0).getAttributeHashMap().values();
+        Collection<Attribute> attributesArrayList = activeTable.listColumns();
         Attribute[] attributes = attributesArrayList.toArray(new Attribute[0]);
         for (int i = 0; i < attributes.length; i++) {
             model.add(i, attributes[i].getName() + " : " + attributes[i].getType().name());
@@ -519,6 +592,12 @@ public class MainViewWindow {
         backToMainFromEditDBButton.addActionListener(e -> changeActivePanel(mainPanel, editDBPanel));
         backToMainFromCreateDB.addActionListener(e -> changeActivePanel(mainPanel, createDBPanel));
         backToMainFromShowDBButton.addActionListener(e -> changeActivePanel(mainPanel, showDBPanel));
+        backToMainFromShowTableButton.addActionListener(e -> changeActivePanel(mainPanel, showTablePanel));
+        backShowDBFromShowTable.addActionListener(e -> changeActivePanel(showDBPanel, showTablePanel));
+        BackToOriginal.addActionListener(e -> {
+            tableHandler = new TableHandler(activeTable);
+            setTableModel();
+        });
         //  saveEditedTableButton.addActionListener(e -> changeActivePanel(editDBPanel, editTablePanel));
         // PanelsProcessing(createDatabaseButton, createDBPanel, mainPanel, editDBPanel, mainPanel, backToMainFromEditDBButton);
     }

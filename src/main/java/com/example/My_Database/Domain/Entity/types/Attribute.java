@@ -13,7 +13,7 @@ import java.time.Instant;
 @Setter
 @Getter
 @NoArgsConstructor
-public  class Attribute  {
+public abstract   class Attribute  {
     public String name;
 
     public Value value;
@@ -22,21 +22,13 @@ public  class Attribute  {
         return this.name;
     }
 
-    public Types getType() {
-        return null;
-    }
+    public abstract Types getType();
 
-    public Boolean validate(String val) {
-        return null;
-    }
+    public abstract Boolean validate(String val);
 
-    public Value getValue(String val) {
-        return null;
-    }
+    public abstract Value getValue(String val);
 
-    public Value getDefault() {
-        return null;
-    }
+    public abstract Value getDefault();
 
     public static Attribute getAttribute(String name, Types type, String value) {
         switch (type) {
@@ -64,11 +56,11 @@ public  class Attribute  {
             case REAL:
                 return new RealAttr(name,"0.0");
             case CHAR:
-                return new CharAttr(name,"");
+                return new CharAttr(name, "0");
             case STRING:
                 return new StringAttr(name,"");
             case TIME:
-                return new TimeAttr(name, Instant.now().toString());
+                return new TimeAttr(name, "00:00");
             case TIME_LNVL:
                 return new TimeLnvlAttr(name,new Interval(DateTime.now(), DateTime.now().plusDays(1)).toString());
             default:

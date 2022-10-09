@@ -2,6 +2,7 @@ package com.example.My_Database.Domain.Entity;
 
 import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.Value;
+import com.example.My_Database.utils.Result;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,31 +16,36 @@ import java.util.*;
 @NoArgsConstructor
 public class Table {
     private String name;
-    private List<Row> rows;
+    private ArrayList<Row> rows;
+    private Columns columns;
 
     public Table(String tableName) {
         this.name = tableName;
         this.rows = new ArrayList<>();
-        rows.add(new Row());
+        this.columns = new Columns();
+
     }
 
-    public Table(String tableName, List<Row> rows) {
+    public Table(String tableName, ArrayList<Row> rows, Columns columns) {
         this.name = tableName;
         this.rows = rows;
+        this.columns = columns;
     }
 
-    public boolean addRow(Row row) {
+    public Result addRow(Row row) {
         rows.add(row);
-        return true;
+        return Result.Success();
     }
 
     public Table projection(ArrayList<String> nameOfColumn) {
-        List<Row> newRows = new ArrayList<>();
+        ArrayList<Row> newRows = new ArrayList<>();
+        Columns newColumns = new Columns();
         for (var row : rows) {
             Row r = new Row();
             for (var name : nameOfColumn) {
-                if (row.getAttributeHashMap().containsKey(name)) {
-                    r.getAttributeHashMap().put(name, row.getAttributeHashMap().get(name));
+                if (row.getValueHashMap().containsKey(name)) {
+                    r.getValueHashMap().put(name, row.getValueHashMap().get(name));
+                    newColumns.columnsName.put(name, columns.getAttr(name));
                 } else {
                     log.info("No Such column");
                 }
@@ -47,54 +53,64 @@ public class Table {
             newRows.add(r);
         }
         deleteDuplicateRows(newRows);
-        return new Table("Projection", newRows);
+        return new Table("Projection", newRows, newColumns);
     }
 
-/*    public Boolean addEmptyRow() {
+    public Result addEmptyRow() {
         HashMap<String, Value> defaultValues = new HashMap<>();
-        for(Attribute attr: rows.get(0).getAttributeHashMap().values()){
+        for (Attribute attr : columns.listAttributes()) {
             defaultValues.put(attr.getName(), attr.getDefault());
         }
         addRow(new Row(defaultValues));
-        return true;
-    }*/
+        return Result.Success();
+    }
 
-    public boolean deleteRow(int index) {
+    public Result deleteRow(int index) {
         if (index < 0 || index >= this.rows.size()) {
-            throw new ArrayIndexOutOfBoundsException(String.format("Index out of bound for deleting row"));
+            return Result.Fail("Index out of bound for deleting row");
         }
         rows.remove(index);
-        return true;
+        return Result.Success();
     }
 
-    public boolean deleteRow(int index, List<Row> rows) {
+    public Result deleteRow(int index, List<Row> rows) {
         if (index < 0 || index >= this.rows.size()) {
-            throw new ArrayIndexOutOfBoundsException(String.format("Index out of bound for deleting row"));
+            return Result.Fail("Index out of bound for deleting row");
         }
         rows.remove(index);
-        return true;
+        return Result.Success();
     }
 
-    public Boolean addAttrToRows(Attribute attribute) {
-        try {
-            for (Row row : rows) {
-                row.getAttributeHashMap().put(attribute.name, attribute);
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
+    private void addAttrToRows(Attribute attribute) {
+        for (Row row : rows) {
+            row.getValueHashMap().put(attribute.getName(), attribute.getDefault());
         }
     }
 
-    public Boolean removeAttrFromRows(String key) {
-        try {
-            for (Row row : rows) {
-                row.getAttributeHashMap().remove(key);
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
+    private void removeAttrFromRows(String key) {
+        for (Row row : rows) {
+            row.getValueHashMap().remove(key);
         }
+    }
+
+    public Result addAttr(Attribute attr) {
+        Result result = columns.addAttr(attr);
+        if (result.isSuccessful()) {
+            addAttrToRows(attr);
+        }
+        return result;
+    }
+
+    public Result deleteAttr(String key) {
+        Result result = columns.deleteAttr(key);
+        if (result.isSuccessful()) {
+            removeAttrFromRows(key);
+        }
+        return result;
+    }
+
+    public Collection<Attribute> listColumns() {
+        return columns.listAttributes();
     }
 
     public void deleteDuplicateRows(List<Row> rows) {

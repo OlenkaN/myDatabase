@@ -11,7 +11,7 @@ public class TimeLnvlAttr extends Attribute {
 
     @Override
     public Types getType() {
-        return null;
+        return Types.TIME_LNVL;
     }
 
     @Override
