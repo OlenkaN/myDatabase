@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 public class IntegerAttr extends Attribute {
     public IntegerAttr(String name, String val) {
         this.name = name;
-        this.value = new Value<>(Integer.parseInt(val));    }
+        this.value = new Value<>(Integer.parseInt(val));
+    }
 
     @Override
     public Types getType() {
@@ -30,6 +31,6 @@ public class IntegerAttr extends Attribute {
 
     @Override
     public Value getDefault() {
-         return new Value<>(0);
+        return new Value<>(0);
     }
 }

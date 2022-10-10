@@ -22,7 +22,7 @@ public class MyDatabaseApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(MyDatabaseApplication.class, args);
-        HashMap<String, Attribute> row1 = new HashMap<>();
+       /* HashMap<String, Attribute> row1 = new HashMap<>();
         row1.put("User", Attribute.getAttribute("User", Types.STRING, "Kate"));
         row1.put("Age", Attribute.getAttribute("Age", Types.INTEGER, "15"));
         row1.put("Class", Attribute.getAttribute("Class", Types.CHAR, "A"));
@@ -52,7 +52,7 @@ public class MyDatabaseApplication {
         databaseManager.add(database);
         Database.SaveToFile("test1", database);
         Database db = new Database();
-        db = Database.ReadFromFile("test1");
+        db = Database.ReadFromFile("test1");*/
 
     }
 
