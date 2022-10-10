@@ -13,6 +13,6 @@ public class AttributeDeserializer implements JsonDeserializer<Attribute> {
         String name = jsonObject.getAsJsonPrimitive("name").getAsString();
         String attrType = jsonObject.getAsJsonPrimitive("type").getAsString();
         String value = jsonObject.getAsJsonPrimitive("value").getAsString();
-        return Attribute.getAttribute(name, Types.valueOf(attrType));
+        return Attribute.getAttribute(name, Types.valueOf(attrType), value);
     }
 }

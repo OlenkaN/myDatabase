@@ -1,4 +1,5 @@
 package com.example.My_Database.Domain.Entity.types;
+
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -6,7 +7,8 @@ import org.joda.time.Interval;
 @NoArgsConstructor
 public class TimeLnvlAttr extends Attribute {
     public TimeLnvlAttr(String name, String value) {
-
+        this.name = name;
+        this.value = new Value<>(Interval.parse(value));
     }
 
     @Override

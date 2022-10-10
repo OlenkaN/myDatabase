@@ -21,21 +21,17 @@ public class Row {
         this.valueHashMap = values;
     }
 
-
-
-
-    public boolean EqualTo(Row anotherRow){
-        for (String key: valueHashMap.keySet()) {
-            if(!anotherRow.valueHashMap.containsKey(key)){
+    public boolean EqualTo(Row anotherRow) {
+        for (String key : valueHashMap.keySet()) {
+            if (!anotherRow.valueHashMap.containsKey(key)) {
                 return false;
             }
-            if(!anotherRow.valueHashMap.get(key).toString().equals(valueHashMap.get(key).toString())){
+            if (!anotherRow.valueHashMap.get(key).toString().equals(valueHashMap.get(key).toString())) {
                 return false;
             }
         }
         return anotherRow.valueHashMap.size() == valueHashMap.size();
     }
-
 
 
 }

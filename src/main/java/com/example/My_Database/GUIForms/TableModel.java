@@ -9,12 +9,13 @@ public class TableModel extends AbstractTableModel {
     private String[] columnNames;
     private String[] attrNames;
 
-    public void setColumnNames(String[] columns){
+    public void setColumnNames(String[] columns) {
         this.columnNames = columns;
     }
 
     private String[][] data;
-    public  void setData(String[][] data){
+
+    public void setData(String[][] data) {
         this.data = data;
         fireTableStructureChanged();
     }

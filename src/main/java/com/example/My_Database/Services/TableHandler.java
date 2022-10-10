@@ -18,7 +18,6 @@ import java.util.HashMap;
 public class TableHandler {
     public TableModel table;
     private int numOfColumns;
-    // private Connection connection;
     ArrayList<String[]> dataArrayList = new ArrayList<>();
     String[] columns;
     String[] emptyRow;
