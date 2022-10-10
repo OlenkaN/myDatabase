@@ -101,8 +101,6 @@ public class MainViewWindow {
         frame.getContentPane().add(createTablePanel, "name_5");
         frame.getContentPane().add(editTablePanel, "name_6");
         frame.getContentPane().add(showTablePanel, "name_7");
-//        frame.getContentPane().add(moviesEditPanel, "name_7");
-//        frame.getContentPane().add(genresEditPanel, "name_8");
     }
 
     private void buttonsProcessing() {

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 public class Columns {
-    HashMap<String, Attribute> columnsName;
+    public HashMap<String, Attribute> columnsName;
 
     public Columns() {
         this.columnsName = new HashMap<>();
@@ -48,6 +48,15 @@ public class Columns {
 
     public Attribute getAttr(String key) {
         return columnsName.getOrDefault(key, null);
+    }
+
+    public boolean columnsExistInTable(ArrayList<String> nameOfColumn) {
+        for (var name : nameOfColumn) {
+            if (!columnsName.containsKey(name)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

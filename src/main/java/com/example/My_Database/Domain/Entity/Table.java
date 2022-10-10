@@ -40,19 +40,17 @@ public class Table {
     public Table projection(ArrayList<String> nameOfColumn) {
         ArrayList<Row> newRows = new ArrayList<>();
         Columns newColumns = new Columns();
-        for (var row : rows) {
-            Row r = new Row();
-            for (var name : nameOfColumn) {
-                if (row.getValueHashMap().containsKey(name)) {
+        if (columns.columnsExistInTable(nameOfColumn)) {
+            for (var row : rows) {
+                Row r = new Row();
+                for (var name : nameOfColumn) {
                     r.getValueHashMap().put(name, row.getValueHashMap().get(name));
-                    newColumns.columnsName.put(name, columns.getAttr(name));
-                } else {
-                    log.info("No Such column");
+                    newColumns.addAttr(columns.getAttr(name));
                 }
+                newRows.add(r);
             }
-            newRows.add(r);
+            deleteDuplicateRows(newRows);
         }
-        deleteDuplicateRows(newRows);
         return new Table("Projection", newRows, newColumns);
     }
 

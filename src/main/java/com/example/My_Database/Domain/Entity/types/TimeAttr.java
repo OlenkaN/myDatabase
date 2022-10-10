@@ -10,6 +10,10 @@ public class TimeAttr extends Attribute {
         this.value = new Value<>(LocalTime.parse(value));
     }
 
+    public TimeAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.TIME;
