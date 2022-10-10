@@ -32,6 +32,13 @@ public class Table {
         this.columns = columns;
     }
 
+    public Result update(Table table)
+    {
+        this.rows = table.rows;
+        this.columns = table.columns;
+        return Result.Success();
+    }
+
     public Result addRow(Row row) {
         rows.add(row);
         return Result.Success();

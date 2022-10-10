@@ -34,6 +34,12 @@ public class Database {
         this.tables=new HashMap<>();
     }
 
+    public Result update(Database database)
+    {
+        this.tables= database.getTables();
+        return Result.Success();
+    }
+
     public Collection<Table> list() {
         return tables.values();
     }
@@ -74,7 +80,6 @@ public class Database {
 
     public static Database ReadFromFile(String filename) {
         try {
-            Gson gson = new Gson();
 
             // create a reader
             BufferedReader reader = new BufferedReader(new FileReader(filename));
