@@ -9,6 +9,10 @@ public class CharAttr extends Attribute {
         this.value = new Value<>(val.charAt(0));
     }
 
+    public CharAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.CHAR;

@@ -9,6 +9,10 @@ public class IntegerAttr extends Attribute {
         this.value = new Value<>(Integer.parseInt(val));
     }
 
+    public IntegerAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.INTEGER;

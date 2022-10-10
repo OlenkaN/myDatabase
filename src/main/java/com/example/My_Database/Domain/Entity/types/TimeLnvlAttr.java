@@ -11,6 +11,10 @@ public class TimeLnvlAttr extends Attribute {
         this.value = new Value<>(Interval.parse(value));
     }
 
+    public TimeLnvlAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.TIME_LNVL;
@@ -18,7 +22,12 @@ public class TimeLnvlAttr extends Attribute {
 
     @Override
     public Boolean validate(String val) {
-        return null;
+        try {
+            Interval.parse(val);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     @Override

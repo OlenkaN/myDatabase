@@ -9,6 +9,10 @@ public class StringAttr extends Attribute {
         this.value = new Value<>(value);
     }
 
+    public StringAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.STRING;

@@ -9,6 +9,10 @@ public class RealAttr extends Attribute {
         this.value = new Value<>(Float.parseFloat(value));
     }
 
+    public RealAttr(String name) {
+        this.name = name;
+    }
+
     @Override
     public Types getType() {
         return Types.REAL;
