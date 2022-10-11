@@ -2,7 +2,6 @@ package com.example.My_Database.controllers;
 
 import com.example.My_Database.Domain.Entity.Database;
 import com.example.My_Database.Domain.Entity.DatabaseManager;
-import com.example.My_Database.Domain.Entity.Table;
 import com.example.My_Database.utils.toGson.Deserializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
