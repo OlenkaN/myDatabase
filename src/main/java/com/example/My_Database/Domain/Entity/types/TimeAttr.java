@@ -1,8 +1,13 @@
 package com.example.My_Database.Domain.Entity.types;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalTime;
+
+@Getter
+@Setter
 @NoArgsConstructor
 public class TimeAttr extends Attribute {
     public TimeAttr(String name, String value) {
@@ -18,6 +23,7 @@ public class TimeAttr extends Attribute {
     public Types getType() {
         return Types.TIME;
     }
+
 
     @Override
     public Boolean validate(String val) {

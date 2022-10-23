@@ -3,17 +3,14 @@ package com.example.My_Database.Domain.Entity;
 import com.example.My_Database.utils.Result;
 import com.example.My_Database.utils.toGson.Deserializer;
 import com.example.My_Database.utils.toGson.Serializer;
-import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.EntityExistsException;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Setter
@@ -32,6 +29,12 @@ public class Database {
     public Database(String name) {
         this.name = name;
         this.tables=new HashMap<>();
+    }
+
+    public Result update(Database database)
+    {
+        this.tables= database.getTables();
+        return Result.Success();
     }
 
     public Collection<Table> list() {
@@ -74,7 +77,6 @@ public class Database {
 
     public static Database ReadFromFile(String filename) {
         try {
-            Gson gson = new Gson();
 
             // create a reader
             BufferedReader reader = new BufferedReader(new FileReader(filename));

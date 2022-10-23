@@ -11,15 +11,9 @@ import java.lang.reflect.Type;
 @NoArgsConstructor
 public class Value<T> {
     private T val;
-    private Types type;
 
     public Value(T value) {
         this.val = value;
-    }
-
-    public Value(T value,  Types type) {
-        this.val = value;
-        this.type = getType();
     }
 
 

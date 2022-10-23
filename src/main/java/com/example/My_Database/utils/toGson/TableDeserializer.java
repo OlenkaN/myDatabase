@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class TableDeserializer implements JsonDeserializer {
     @Override
@@ -31,9 +32,10 @@ public class TableDeserializer implements JsonDeserializer {
         ArrayList<Row> rows = new ArrayList<>();
         jsonObject.get("rows").getAsJsonArray().forEach(rowJsonElement -> {
             HashMap<String, Value> values = new HashMap<>();
-            JsonObject jsonValues = rowJsonElement.getAsJsonObject().get("values").getAsJsonObject();
+            JsonObject jsonValues = rowJsonElement.getAsJsonObject().get("valueHashMap").getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : jsonValues.entrySet()) {
-                values.put(entry.getKey(), findByName(entry.getKey(), attributes).getValue(jsonValues.get(entry.getKey()).getAsString()));
+                values.put(entry.getKey(), Objects.requireNonNull(findByName(entry.getKey(), attributes))
+                      .getValue(ValueDeserializer.toString(jsonValues.get(entry.getKey()))));
             }
             rows.add(new Row(values));
         });
