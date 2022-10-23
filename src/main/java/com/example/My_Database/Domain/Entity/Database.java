@@ -3,17 +3,14 @@ package com.example.My_Database.Domain.Entity;
 import com.example.My_Database.utils.Result;
 import com.example.My_Database.utils.toGson.Deserializer;
 import com.example.My_Database.utils.toGson.Serializer;
-import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.EntityExistsException;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Setter

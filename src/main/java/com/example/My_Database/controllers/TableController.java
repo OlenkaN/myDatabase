@@ -69,9 +69,9 @@ public class TableController {
 
     @Operation(summary = "Create table",
           responses = {
-                @ApiResponse(responseCode = "201", description = "Successfully created db",
+                @ApiResponse(responseCode = "201", description = "Successfully created table",
                       content = @Content(schema = @Schema(implementation = Database.class))),
-                @ApiResponse(responseCode = "400", description = "Db already exist in db",
+                @ApiResponse(responseCode = "400", description = "Table already exist in db",
                       content = @Content(schema = @Schema(implementation = DuplicateKeyException.class)))
           })
     @PostMapping
@@ -130,12 +130,27 @@ public class TableController {
                 })
 
     @PostMapping("/{tableName}/attr")
-    public ResponseEntity<?> addAttribute(@PathVariable String tableName, @PathVariable String dbName, AttributeRequest attributeRequest) {
+    public ResponseEntity<?> addAttribute(@PathVariable String tableName, @PathVariable String dbName, @RequestBody AttributeRequest attributeRequest) {
         log.info("Add attribute  {}", attributeRequest.getName());
-        databaseManager.getDatabases().get(dbName).getTables().get(tableName).addAttr(attributeRequest.getAttr());
         return ResponseEntity
               .status(CREATED)
               .body(databaseManager.getDatabases().get(dbName).getTables()
                     .get(tableName).addAttr(attributeRequest.getAttr()));
+    }
+
+    @Operation(summary = "Add attribute to table ",
+          responses =
+                {
+                      @ApiResponse(responseCode = "200", description = "Successfully add attr", content = @Content(schema = @Schema(implementation = String.class))),
+                      @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(schema = @Schema(implementation = ResourceNotFoundException.class)))
+                })
+
+    @DeleteMapping("/{tableName}/attr")
+    public ResponseEntity<String> deleteAttribute(@PathVariable String tableName, @PathVariable String dbName, @RequestBody String nameOfAttr) {
+        log.info("Delete attribute  {}", nameOfAttr);
+        databaseManager.getDatabases().get(dbName).getTables().get(tableName).deleteAttr(nameOfAttr);
+        return ResponseEntity
+              .noContent()
+              .build();
     }
 }
