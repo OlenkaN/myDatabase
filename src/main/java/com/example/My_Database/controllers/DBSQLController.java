@@ -3,6 +3,7 @@ package com.example.My_Database.controllers;
 import com.example.My_Database.Domain.Entity.Database;
 import com.example.My_Database.storage.MySQL.MySQLClient;
 import com.example.My_Database.storage.Storage;
+import com.example.My_Database.storage.mongo.MongoDBClient;
 import com.example.My_Database.utils.toGson.Deserializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -111,7 +112,7 @@ public class DBSQLController {
 
     private static Storage getStorageClient(String storageType) {
         if (storageType.equals("mongo")) {
-            // return new MongoDBClient();
+            return new MongoDBClient();
         } else if (storageType.equals("mysql")) {
             return new MySQLClient();
         }

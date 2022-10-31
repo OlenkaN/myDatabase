@@ -13,14 +13,16 @@ import com.example.My_Database.utils.toGson.Deserializer;
 import com.example.My_Database.utils.toGson.Serializer;
 import com.google.gson.Gson;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class})
 public class MyDatabaseApplication {
 
     public static void main(String[] args) {
