@@ -8,35 +8,38 @@ import com.example.My_Database.Domain.Entity.types.Attribute;
 import com.example.My_Database.Domain.Entity.types.TimeLnvlAttr;
 import com.example.My_Database.Domain.Entity.types.Types;
 import com.example.My_Database.Domain.Entity.types.Value;
+import com.example.My_Database.storage.MySQL.MySQLClient;
 import com.example.My_Database.utils.toGson.Deserializer;
 import com.example.My_Database.utils.toGson.Serializer;
 import com.google.gson.Gson;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class})
 public class MyDatabaseApplication {
 
     public static void main(String[] args) {
 
         SpringApplication.run(MyDatabaseApplication.class, args);
-        Table expectedResultAddAttribute = new Table("Init");
-        Attribute[] attributes = {
-              Attribute.getAttribute("User", Types.STRING),
-              Attribute.getAttribute("Time", Types.TIME),
-              Attribute.getAttribute("Class", Types.CHAR),
-              Attribute.getAttribute("Mark", Types.REAL)
-        };
-        HashMap<String, Value> row1 = new HashMap<>();
-        row1.put("User", attributes[0].getValue("Kate"));
-        row1.put("Time", attributes[1].getValue("15:30"));
-        row1.put("Class", attributes[2].getValue("A"));
-        row1.put("Mark", attributes[3].getDefault());
+//        Table expectedResultAddAttribute = new Table("Init");
+//        Attribute[] attributes = {
+//              Attribute.getAttribute("User", Types.STRING),
+//              Attribute.getAttribute("Time", Types.TIME),
+//              Attribute.getAttribute("Class", Types.CHAR),
+//              Attribute.getAttribute("Mark", Types.REAL)
+//        };
+//        HashMap<String, Value> row1 = new HashMap<>();
+//        row1.put("User", attributes[0].getValue("Kate"));
+//        row1.put("Time", attributes[1].getValue("15:30"));
+//        row1.put("Class", attributes[2].getValue("A"));
+//        row1.put("Mark", attributes[3].getDefault());
 //
 //        HashMap<String, Value> row2 = new HashMap<>();
 //        row2.put("User", attributes[0].getValue("Kate"));
@@ -49,11 +52,15 @@ public class MyDatabaseApplication {
 //        row3.put("Age", attributes[1].getValue("16"));
 //        row3.put("Class", attributes[2].getValue("A"));
 //        row3.put("Mark", attributes[3].getDefault());
-        for (Attribute attr : attributes) {
+/*        for (Attribute attr : attributes) {
             expectedResultAddAttribute.addAttr(attr);
         }
         expectedResultAddAttribute.addRow(new Row(row1));
-        Database.ReadFromFile("ttime");
+        HashMap<String, Table> tableHashMap = new HashMap<>();
+        tableHashMap.put(expectedResultAddAttribute.getName(), expectedResultAddAttribute);
+        Database database = new Database("Ternopil", tableHashMap);
+        MySQLClient mySQLClient= new MySQLClient();
+        mySQLClient.saveDB(database);*/
 //        expectedResultAddAttribute.addRow(new Row(row2));
 //        expectedResultAddAttribute.addRow(new Row(row3));
 
@@ -89,6 +96,6 @@ public class MyDatabaseApplication {
         Database db = new Database();
         db = Database.ReadFromFile("test1");*/
 
-}
+    }
 
 }
